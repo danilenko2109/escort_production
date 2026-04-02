@@ -2,8 +2,11 @@ from fastapi import FastAPI, APIRouter, HTTPException, Query, Depends, Request
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
+import json
 import os
 import logging
+import sqlite3
+import threading
 from pathlib import Path
 from typing import List, Optional, Any
 import time
@@ -74,7 +77,7 @@ def now_iso() -> str:
 
 
 def ensure_profile_response_shape(profile: dict) -> dict:
-    """Normalize documents so they pass response model validation."""
+    """Normalize records so they pass response model validation."""
 
     def as_str(value: Any, default: str) -> str:
         if value is None:
@@ -144,26 +147,113 @@ def ensure_profile_response_shape(profile: dict) -> dict:
     return sanitized
 
 
-class InMemoryStore:
+class SQLiteStore:
     def __init__(self):
-        self.profiles: List[dict] = []
-        self.admin_users: List[dict] = []
-        self.contact_messages: List[dict] = []
-        self._seed_defaults()
+        self.db_path = os.getenv("SQLITE_DB_PATH", str(ROOT_DIR / "app.db"))
+        self._lock = threading.Lock()
+        self._init_db()
 
-    def _seed_defaults(self):
-        created = now_iso()
-        self.admin_users.append(
+    def _connect(self):
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    @staticmethod
+    def _loads_list(value: Any) -> List[str]:
+        if value in (None, ""):
+            return []
+        try:
+            parsed = json.loads(value)
+            return parsed if isinstance(parsed, list) else []
+        except (TypeError, json.JSONDecodeError):
+            return []
+
+    @staticmethod
+    def _profile_from_row(row: sqlite3.Row) -> dict:
+        return ensure_profile_response_shape(
             {
-                "id": str(uuid.uuid4()),
-                "username": "admin",
-                "password_hash": hash_password("admin123"),
-                "createdAt": created,
+                "id": row["id"],
+                "slug": row["slug"],
+                "name": row["name"],
+                "age": row["age"],
+                "city": row["city"],
+                "country": row["country"],
+                "descriptionShort": row["descriptionShort"],
+                "descriptionFull": row["descriptionFull"],
+                "images": SQLiteStore._loads_list(row["images"]),
+                "height": row["height"],
+                "weight": row["weight"],
+                "languages": SQLiteStore._loads_list(row["languages"]),
+                "tags": SQLiteStore._loads_list(row["tags"]),
+                "lat": row["lat"],
+                "lng": row["lng"],
+                "isActive": bool(row["isActive"]),
+                "isFeatured": bool(row["isFeatured"]),
+                "createdAt": row["createdAt"],
+                "updatedAt": row["updatedAt"],
             }
         )
-        self.profiles.extend(
-            [
-                ensure_profile_response_shape(
+
+    def _init_db(self):
+        with self._connect() as conn:
+            conn.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS admin_users (
+                    id TEXT PRIMARY KEY,
+                    username TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    createdAt TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS profiles (
+                    id TEXT PRIMARY KEY,
+                    slug TEXT UNIQUE NOT NULL,
+                    name TEXT NOT NULL,
+                    age INTEGER NOT NULL,
+                    city TEXT NOT NULL,
+                    country TEXT NOT NULL,
+                    descriptionShort TEXT NOT NULL,
+                    descriptionFull TEXT NOT NULL,
+                    images TEXT NOT NULL,
+                    height INTEGER NOT NULL,
+                    weight INTEGER NOT NULL,
+                    languages TEXT NOT NULL,
+                    tags TEXT NOT NULL,
+                    lat REAL NOT NULL,
+                    lng REAL NOT NULL,
+                    isActive INTEGER NOT NULL DEFAULT 1,
+                    isFeatured INTEGER NOT NULL DEFAULT 0,
+                    createdAt TEXT NOT NULL,
+                    updatedAt TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS contact_messages (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    message TEXT NOT NULL,
+                    createdAt TEXT NOT NULL
+                );
+                """
+            )
+        self.seed_defaults_if_empty()
+
+    def seed_defaults_if_empty(self):
+        with self._connect() as conn:
+            has_admin = conn.execute("SELECT COUNT(*) AS cnt FROM admin_users").fetchone()["cnt"] > 0
+            profiles_count = conn.execute("SELECT COUNT(*) AS cnt FROM profiles").fetchone()["cnt"]
+
+            if not has_admin:
+                created = now_iso()
+                conn.execute(
+                    "INSERT INTO admin_users (id, username, password_hash, createdAt) VALUES (?, ?, ?, ?)",
+                    (str(uuid.uuid4()), "admin", hash_password("admin123"), created),
+                )
+
+            if profiles_count == 0:
+                created = now_iso()
+                default_profiles = [
                     {
                         "id": str(uuid.uuid4()),
                         "name": "Анастасия",
@@ -183,9 +273,7 @@ class InMemoryStore:
                         "isFeatured": True,
                         "createdAt": created,
                         "updatedAt": created,
-                    }
-                ),
-                ensure_profile_response_shape(
+                    },
                     {
                         "id": str(uuid.uuid4()),
                         "name": "София",
@@ -205,20 +293,144 @@ class InMemoryStore:
                         "isFeatured": False,
                         "createdAt": created,
                         "updatedAt": created,
-                    }
+                    },
+                ]
+                for profile in default_profiles:
+                    self.insert_profile(profile)
+
+    def list_profiles(self) -> List[dict]:
+        with self._connect() as conn:
+            rows = conn.execute("SELECT * FROM profiles").fetchall()
+        return [self._profile_from_row(row) for row in rows]
+
+    def get_profile(self, profile_id: str) -> Optional[dict]:
+        with self._connect() as conn:
+            row = conn.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,)).fetchone()
+        return self._profile_from_row(row) if row else None
+
+    def insert_profile(self, profile: dict) -> dict:
+        profile = ensure_profile_response_shape(profile)
+        with self._lock, self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO profiles (
+                    id, slug, name, age, city, country, descriptionShort, descriptionFull,
+                    images, height, weight, languages, tags, lat, lng,
+                    isActive, isFeatured, createdAt, updatedAt
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    profile["id"],
+                    profile["slug"],
+                    profile["name"],
+                    profile["age"],
+                    profile["city"],
+                    profile["country"],
+                    profile["descriptionShort"],
+                    profile["descriptionFull"],
+                    json.dumps(profile["images"], ensure_ascii=False),
+                    profile["height"],
+                    profile["weight"],
+                    json.dumps(profile["languages"], ensure_ascii=False),
+                    json.dumps(profile["tags"], ensure_ascii=False),
+                    profile["lat"],
+                    profile["lng"],
+                    int(profile["isActive"]),
+                    int(profile["isFeatured"]),
+                    profile["createdAt"],
+                    profile["updatedAt"],
                 ),
-            ]
-        )
+            )
+        return profile
+
+    def update_profile(self, profile_id: str, update_dict: dict) -> Optional[dict]:
+        existing = self.get_profile(profile_id)
+        if not existing:
+            return None
+
+        merged = {**existing, **update_dict, "id": profile_id}
+        merged = ensure_profile_response_shape(merged)
+
+        with self._lock, self._connect() as conn:
+            conn.execute(
+                """
+                UPDATE profiles
+                SET slug = ?, name = ?, age = ?, city = ?, country = ?, descriptionShort = ?, descriptionFull = ?,
+                    images = ?, height = ?, weight = ?, languages = ?, tags = ?, lat = ?, lng = ?,
+                    isActive = ?, isFeatured = ?, createdAt = ?, updatedAt = ?
+                WHERE id = ?
+                """,
+                (
+                    merged["slug"],
+                    merged["name"],
+                    merged["age"],
+                    merged["city"],
+                    merged["country"],
+                    merged["descriptionShort"],
+                    merged["descriptionFull"],
+                    json.dumps(merged["images"], ensure_ascii=False),
+                    merged["height"],
+                    merged["weight"],
+                    json.dumps(merged["languages"], ensure_ascii=False),
+                    json.dumps(merged["tags"], ensure_ascii=False),
+                    merged["lat"],
+                    merged["lng"],
+                    int(merged["isActive"]),
+                    int(merged["isFeatured"]),
+                    merged["createdAt"],
+                    merged["updatedAt"],
+                    profile_id,
+                ),
+            )
+        return merged
+
+    def delete_profile(self, profile_id: str) -> bool:
+        with self._lock, self._connect() as conn:
+            cursor = conn.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
+            return cursor.rowcount > 0
+
+    def get_admin_by_username(self, username: str) -> Optional[dict]:
+        with self._connect() as conn:
+            row = conn.execute("SELECT * FROM admin_users WHERE username = ?", (username,)).fetchone()
+        return dict(row) if row else None
+
+    def save_contact_message(self, message_dict: dict):
+        with self._lock, self._connect() as conn:
+            conn.execute(
+                "INSERT INTO contact_messages (id, name, email, phone, message, createdAt) VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    message_dict["id"],
+                    message_dict["name"],
+                    message_dict["email"],
+                    message_dict["phone"],
+                    message_dict["message"],
+                    message_dict["createdAt"],
+                ),
+            )
+
+    def stats(self) -> dict:
+        with self._connect() as conn:
+            total_profiles = conn.execute("SELECT COUNT(*) AS cnt FROM profiles").fetchone()["cnt"]
+            active_profiles = conn.execute("SELECT COUNT(*) AS cnt FROM profiles WHERE isActive = 1").fetchone()["cnt"]
+            featured_profiles = conn.execute("SELECT COUNT(*) AS cnt FROM profiles WHERE isFeatured = 1").fetchone()["cnt"]
+            total_messages = conn.execute("SELECT COUNT(*) AS cnt FROM contact_messages").fetchone()["cnt"]
+
+        return {
+            "total_profiles": total_profiles,
+            "active_profiles": active_profiles,
+            "featured_profiles": featured_profiles,
+            "total_messages": total_messages,
+        }
 
 
-store = InMemoryStore()
+store = SQLiteStore()
 
 
 def get_profile_or_404(profile_id: str) -> dict:
-    for profile in store.profiles:
-        if profile.get("id") == profile_id:
-            return profile
-    raise HTTPException(status_code=404, detail="Profile not found")
+    profile = store.get_profile(profile_id)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
 
 
 @api_router.get("/profiles", response_model=List[Profile])
@@ -231,7 +443,7 @@ async def get_profiles(
     sort_by: str = Query("nearest"),
     featured_only: bool = Query(False)
 ):
-    profiles = [ensure_profile_response_shape(p) for p in store.profiles]
+    profiles = store.list_profiles()
 
     if active_only:
         profiles = [p for p in profiles if p.get("isActive")]
@@ -273,35 +485,46 @@ async def create_profile(profile_data: ProfileCreate, current_admin: dict = Depe
     profile_dict["slug"] = slugify(profile_data.name)
     profile_dict["createdAt"] = now_iso()
     profile_dict["updatedAt"] = now_iso()
-    store.profiles.append(profile_dict)
-    return Profile(**profile_dict)
+
+    try:
+        created = store.insert_profile(profile_dict)
+    except sqlite3.IntegrityError:
+        profile_dict["slug"] = f"{profile_dict['slug']}-{profile_dict['id'][:8]}"
+        created = store.insert_profile(profile_dict)
+
+    return Profile(**created)
 
 
 @api_router.put("/profiles/{profile_id}", response_model=Profile)
 async def update_profile(profile_id: str, profile_data: ProfileUpdate, current_admin: dict = Depends(get_current_admin)):
-    profile = get_profile_or_404(profile_id)
     update_dict = {k: v for k, v in profile_data.model_dump().items() if v is not None}
     update_dict["updatedAt"] = now_iso()
     if "name" in update_dict:
         update_dict["slug"] = slugify(update_dict["name"])
-    profile.update(update_dict)
-    normalized = ensure_profile_response_shape(profile)
-    profile.update(normalized)
-    return Profile(**profile)
+
+    try:
+        updated = store.update_profile(profile_id, update_dict)
+    except sqlite3.IntegrityError:
+        update_dict["slug"] = f"{update_dict.get('slug', 'profile')}-{profile_id[:8]}"
+        updated = store.update_profile(profile_id, update_dict)
+
+    if updated is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    return Profile(**updated)
 
 
 @api_router.delete("/profiles/{profile_id}")
 async def delete_profile(profile_id: str, current_admin: dict = Depends(get_current_admin)):
-    for idx, profile in enumerate(store.profiles):
-        if profile.get("id") == profile_id:
-            store.profiles.pop(idx)
-            return {"message": "Profile deleted successfully"}
-    raise HTTPException(status_code=404, detail="Profile not found")
+    deleted = store.delete_profile(profile_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return {"message": "Profile deleted successfully"}
 
 
 @api_router.post("/admin/login", response_model=AdminLoginResponse)
 async def admin_login(credentials: AdminLogin):
-    admin = next((u for u in store.admin_users if u.get("username") == credentials.username), None)
+    admin = store.get_admin_by_username(credentials.username)
     if not admin or not verify_password(credentials.password, admin["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token({"username": admin["username"], "id": admin["id"]})
@@ -315,12 +538,7 @@ async def get_admin_me(current_admin: dict = Depends(get_current_admin)):
 
 @api_router.get("/admin/stats")
 async def get_admin_stats(current_admin: dict = Depends(get_current_admin)):
-    return {
-        "total_profiles": len(store.profiles),
-        "active_profiles": len([p for p in store.profiles if p.get("isActive")]),
-        "featured_profiles": len([p for p in store.profiles if p.get("isFeatured")]),
-        "total_messages": len(store.contact_messages),
-    }
+    return store.stats()
 
 
 @api_router.post("/contact")
@@ -328,7 +546,7 @@ async def submit_contact(message_data: ContactMessageCreate):
     message_dict = message_data.model_dump()
     message_dict["id"] = str(uuid.uuid4())
     message_dict["createdAt"] = now_iso()
-    store.contact_messages.append(message_dict)
+    store.save_contact_message(message_dict)
 
     if telegram_bot and telegram_chat_id and telegram_chat_id != "your_chat_id":
         try:
@@ -376,16 +594,18 @@ async def generate_cloudinary_signature(
 
 @api_router.get("/")
 async def root():
-    return {"message": "L'Aura API", "version": "1.1.0", "status": "running"}
+    return {"message": "L'Aura API", "version": "1.2.0", "status": "running"}
 
 
 @api_router.get("/health")
 async def health():
+    stats = store.stats()
     return {
         "status": "ok",
-        "database": "in-memory",
+        "database": "sqlite",
         "timestamp": now_iso(),
-        "profiles": len(store.profiles),
+        "profiles": stats["total_profiles"],
+        "db_path": store.db_path,
     }
 
 

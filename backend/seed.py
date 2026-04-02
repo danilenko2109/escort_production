@@ -1,20 +1,17 @@
-import asyncio
-from motor.motor_asyncio import AsyncIOMotorClient
+import json
 import os
-from dotenv import load_dotenv
-from pathlib import Path
+import random
+import sqlite3
 import uuid
 from datetime import datetime, timezone
-from auth import hash_password
+from pathlib import Path
+
+import bcrypt
+from utils import slugify
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+DB_PATH = os.getenv("SQLITE_DB_PATH", str(ROOT_DIR / "app.db"))
 
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Russian female names
 NAMES = [
     "Анастасия", "Виктория", "Александра", "Екатерина", "Мария",
     "Дарья", "Полина", "Елена", "Ольга", "Наталья",
@@ -49,91 +46,149 @@ DESCRIPTIONS_SHORT = [
     "Харизматичная и образованная собеседница",
     "Стильная модель для деловых и светских мероприятий",
     "Очаровательная спутница с европейским шармом",
-    "Интеллигентная красавица для премиального досуга",
-    "Элегантная девушка с модельной внешностью",
-    "Изысканная компаньонка высокого уровня",
-    "Утонченная леди для взыскательных джентльменов",
-    "Стильная и образованная спутница"
 ]
 
 DESCRIPTIONS_FULL = [
-    "Позвольте представить вам воплощение утонченности и шарма. Я предлагаю незабываемое время в компании образованной и элегантной леди. Мои интересы включают искусство, путешествия и изысканную кухню. Я создам атмосферу комфорта и взаимопонимания на любом мероприятии.",
-    "Я - профессиональная модель и приятная собеседница. Мое образование и жизненный опыт позволяют мне быть интересной компаньонкой в любой ситуации. Я ценю качество, стиль и конфиденциальность. Буду рада стать вашей спутницей на важном мероприятии или приятном вечере.",
-    "Высокий уровень культуры, безупречные манеры и элегантный стиль - это обо мне. Я предпочитаю общество интеллигентных мужчин, которые ценят качественное общение и приятное времяпрепровождение. Гарантирую полную конфиденциальность и индивидуальный подход.",
-    "Меня отличает естественная красота, природное обаяние и умение создавать особенную атмосферу. Я с удовольствием составлю вам компанию на деловом ужине, культурном мероприятии или в путешествии. Владею несколькими языками и разбираюсь в современном искусстве.",
+    "Позвольте представить вам воплощение утонченности и шарма. Я предлагаю незабываемое время в компании образованной и элегантной леди.",
+    "Я - профессиональная модель и приятная собеседница. Мое образование и жизненный опыт позволяют быть интересной компаньонкой в любой ситуации.",
+    "Высокий уровень культуры, безупречные манеры и элегантный стиль - это обо мне. Гарантирую полную конфиденциальность.",
 ]
 
-# Image placeholders from design guidelines
 IMAGES = [
-    "https://images.unsplash.com/photo-1759933512107-e02a1328190d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwzfHxmYXNoaW9uJTIwbW9kZWwlMjBlZGl0b3JpYWwlMjBwb3J0cmFpdCUyMGRhcmslMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc3NDg3OTYzMnww&ixlib=rb-4.1.0&q=85",
-    "https://images.unsplash.com/photo-1766299231533-27fb998d1a6e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwbW9kZWwlMjBlZGl0b3JpYWwlMjBwb3J0cmFpdCUyMGRhcmslMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc3NDg3OTYzMnww&ixlib=rb-4.1.0&q=85",
-    "https://static.prod-images.emergentagent.com/jobs/f41ef10d-503e-475e-a135-ee7599651f36/images/6cc07ea180d262dab3293a3e173fdbbebfab68ec1593280c70cb4430b2aba179.png"
+    "https://images.unsplash.com/photo-1759933512107-e02a1328190d",
+    "https://images.unsplash.com/photo-1766299231533-27fb998d1a6e",
+    "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
 ]
 
-async def seed_database():
-    print("🌱 Starting database seed...")
-    
-    # Clear existing data
-    await db.profiles.delete_many({})
-    await db.admin_users.delete_many({})
-    await db.contact_messages.delete_many({})
-    
-    print("✅ Cleared existing data")
-    
-    # Create admin user
-    admin_user = {
-        "id": str(uuid.uuid4()),
-        "username": "admin",
-        "password_hash": hash_password("admin123"),
-        "createdAt": datetime.now(timezone.utc).isoformat()
-    }
-    await db.admin_users.insert_one(admin_user)
-    print("✅ Created admin user (username: admin, password: admin123)")
-    
-    # Create profiles
-    profiles = []
-    import random
-    
-    for i, name in enumerate(NAMES):
-        city_data = random.choice(CITIES)
-        city_name, base_lat, base_lng = city_data
-        
-        # Add small random offset to coordinates
-        lat = base_lat + random.uniform(-0.1, 0.1)
-        lng = base_lng + random.uniform(-0.1, 0.1)
-        
-        profile = {
+
+
+
+def hash_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode("utf-8"), salt)
+    return hashed.decode("utf-8")
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def get_conn() -> sqlite3.Connection:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def recreate_schema(conn: sqlite3.Connection):
+    conn.executescript(
+        """
+        DROP TABLE IF EXISTS contact_messages;
+        DROP TABLE IF EXISTS profiles;
+        DROP TABLE IF EXISTS admin_users;
+
+        CREATE TABLE admin_users (
+            id TEXT PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            createdAt TEXT NOT NULL
+        );
+
+        CREATE TABLE profiles (
+            id TEXT PRIMARY KEY,
+            slug TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            age INTEGER NOT NULL,
+            city TEXT NOT NULL,
+            country TEXT NOT NULL,
+            descriptionShort TEXT NOT NULL,
+            descriptionFull TEXT NOT NULL,
+            images TEXT NOT NULL,
+            height INTEGER NOT NULL,
+            weight INTEGER NOT NULL,
+            languages TEXT NOT NULL,
+            tags TEXT NOT NULL,
+            lat REAL NOT NULL,
+            lng REAL NOT NULL,
+            isActive INTEGER NOT NULL DEFAULT 1,
+            isFeatured INTEGER NOT NULL DEFAULT 0,
+            createdAt TEXT NOT NULL,
+            updatedAt TEXT NOT NULL
+        );
+
+        CREATE TABLE contact_messages (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            message TEXT NOT NULL,
+            createdAt TEXT NOT NULL
+        );
+        """
+    )
+
+
+def seed_database():
+    print(f"🌱 Starting SQLite seed: {DB_PATH}")
+
+    with get_conn() as conn:
+        recreate_schema(conn)
+
+        admin_user = {
             "id": str(uuid.uuid4()),
-            "slug": f"profile-{i+1}",
-            "name": name,
-            "age": random.randint(21, 32),
-            "city": city_name,
-            "country": "Россия",
-            "descriptionShort": random.choice(DESCRIPTIONS_SHORT),
-            "descriptionFull": random.choice(DESCRIPTIONS_FULL),
-            "images": [random.choice(IMAGES) for _ in range(random.randint(1, 3))],
-            "height": random.randint(165, 180),
-            "weight": random.randint(50, 65),
-            "languages": random.sample(LANGUAGES, random.randint(2, 4)),
-            "tags": random.sample(TAGS, random.randint(2, 5)),
-            "lat": lat,
-            "lng": lng,
-            "isActive": True,
-            "isFeatured": i < 5,  # First 5 are featured
-            "createdAt": datetime.now(timezone.utc).isoformat(),
-            "updatedAt": datetime.now(timezone.utc).isoformat()
+            "username": "admin",
+            "password_hash": hash_password("admin123"),
+            "createdAt": now_iso(),
         }
-        profiles.append(profile)
-    
-    await db.profiles.insert_many(profiles)
+        conn.execute(
+            "INSERT INTO admin_users (id, username, password_hash, createdAt) VALUES (?, ?, ?, ?)",
+            (admin_user["id"], admin_user["username"], admin_user["password_hash"], admin_user["createdAt"]),
+        )
+
+        profiles = []
+        for i, name in enumerate(NAMES):
+            city_name, base_lat, base_lng = random.choice(CITIES)
+            lat = base_lat + random.uniform(-0.1, 0.1)
+            lng = base_lng + random.uniform(-0.1, 0.1)
+            profile_id = str(uuid.uuid4())
+            profile = {
+                "id": profile_id,
+                "slug": f"{slugify(name)}-{i+1}",
+                "name": name,
+                "age": random.randint(21, 32),
+                "city": city_name,
+                "country": "Россия",
+                "descriptionShort": random.choice(DESCRIPTIONS_SHORT),
+                "descriptionFull": random.choice(DESCRIPTIONS_FULL),
+                "images": json.dumps([random.choice(IMAGES) for _ in range(random.randint(1, 3))], ensure_ascii=False),
+                "height": random.randint(165, 180),
+                "weight": random.randint(50, 65),
+                "languages": json.dumps(random.sample(LANGUAGES, random.randint(2, 4)), ensure_ascii=False),
+                "tags": json.dumps(random.sample(TAGS, random.randint(2, 5)), ensure_ascii=False),
+                "lat": lat,
+                "lng": lng,
+                "isActive": 1,
+                "isFeatured": 1 if i < 5 else 0,
+                "createdAt": now_iso(),
+                "updatedAt": now_iso(),
+            }
+            profiles.append(profile)
+
+        conn.executemany(
+            """
+            INSERT INTO profiles (
+                id, slug, name, age, city, country, descriptionShort, descriptionFull, images,
+                height, weight, languages, tags, lat, lng, isActive, isFeatured, createdAt, updatedAt
+            ) VALUES (
+                :id, :slug, :name, :age, :city, :country, :descriptionShort, :descriptionFull, :images,
+                :height, :weight, :languages, :tags, :lat, :lng, :isActive, :isFeatured, :createdAt, :updatedAt
+            )
+            """,
+            profiles,
+        )
+
+    print(f"✅ Created admin user (admin/admin123)")
     print(f"✅ Created {len(profiles)} profiles")
-    
-    print("🎉 Database seed completed!")
-    print("\n📝 Admin credentials:")
-    print("   Username: admin")
-    print("   Password: admin123")
-    
-    client.close()
+    print("🎉 SQLite seed completed")
+
 
 if __name__ == "__main__":
-    asyncio.run(seed_database())
+    seed_database()

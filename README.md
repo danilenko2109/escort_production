@@ -45,7 +45,7 @@ make frontend   # Terminal 2
 |-----------|--------|----------|
 | Node.js | 18+ | `node --version` |
 | Python | 3.11+ | `python3 --version` |
-| MongoDB | 4.4+ | `mongod --version` |
+| SQLite | built-in | `python3 -c "import sqlite3"` |
 | Yarn | 1.22+ | `yarn --version` |
 
 **Проверить все зависимости:**
@@ -160,13 +160,13 @@ uvicorn server:app --host 0.0.0.0 --port 8001 --workers 4
 
 **Backend:**
 - FastAPI
-- Motor (async MongoDB)
+- SQLite (sqlite3)
 - JWT аутентификация
 - Cloudinary (изображения)
 - Telegram Bot (уведомления)
 
 **Database:**
-- MongoDB
+- SQLite (`backend/app.db`)
 
 ---
 
