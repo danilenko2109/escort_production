@@ -41,16 +41,16 @@ const AdminDashboardPage = () => {
   const handleSavePhone = async () => {
     const value = bookingPhone.trim();
     if (value.length < 5) {
-      toast.error('Укажите корректный номер телефона');
+      toast.error('Укажите корректный номер карты');
       return;
     }
     setSavingPhone(true);
     try {
       const data = await settingsAPI.updateBookingPhone(value);
       setBookingPhone(data.phone || value);
-      toast.success('Телефон подтверждения обновлен');
+      toast.success('Реквизиты подтверждения обновлен');
     } catch (error) {
-      toast.error(error.message || 'Не удалось сохранить телефон');
+      toast.error(error.message || 'Не удалось сохранить реквизиты');
     } finally {
       setSavingPhone(false);
     }
@@ -96,18 +96,18 @@ const AdminDashboardPage = () => {
         <div className="mb-12 bg-[#0A0A0A] border border-white/10 p-6 rounded-sm">
           <h2 className="text-2xl font-medium text-[#D4AF37] mb-2">Настройки заявок</h2>
           <p className="text-sm text-[#A1A1AA] mb-6">
-            Этот номер показывается в модальном окне после отправки заявки на анкете.
+            Этот номер карты показывается в модальном окне после отправки заявки на анкете.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-end">
             <div>
               <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">
-                Телефон подтверждения заявок
+                Реквизиты
               </label>
               <input
                 type="text"
                 value={bookingPhone}
                 onChange={(e) => setBookingPhone(e.target.value)}
-                placeholder="+7 (900) 000-00-00"
+                placeholder="0000 0000 0000 0000"
                 className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-3 px-0 outline-none"
               />
             </div>

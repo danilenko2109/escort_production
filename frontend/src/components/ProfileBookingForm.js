@@ -443,7 +443,7 @@ const ProfileBookingForm = ({ profile }) => {
               </button>
             </div>
             <p className="mt-2 text-4xl font-medium tracking-tight text-[#F8F8F8]">{formatRub(price)}</p>
-            <p className="mt-5 text-[#A1A1AA]">Для подтверждения позвоните</p>
+            <p className="mt-5 text-[#A1A1AA]">Для подтверждения отправьте сумму на указанные реквизиты</p>
             <p className="mt-2 text-3xl font-medium tracking-tight text-[#D4AF37]">{bookingPhone}</p>
             <button
               type="button"

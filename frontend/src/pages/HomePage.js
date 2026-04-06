@@ -153,7 +153,7 @@ const HomePage = () => {
       </section>
 
       <WhyElegantSection />
-      <BookingStepsSection />
+      {/* <BookingStepsSection /> */}
       <ConfidentialitySection />
       <MeetingFormatsSection />
       <FaqSection />
