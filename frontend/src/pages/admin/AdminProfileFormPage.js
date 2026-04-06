@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, X } from 'lucide-react';
-import { profilesAPI } from '../../utils/api';
-import { uploadToCloudinary } from '../../utils/cloudinary';
+import { ArrowLeft, X } from 'lucide-react';
+import { profilesAPI, uploadsAPI } from '../../services/api';
 import { toast } from 'sonner';
+import { resolveMediaUrl } from '../../lib/mediaUrl';
 
 const AdminProfileFormPage = () => {
   const { id } = useParams();
@@ -12,6 +12,7 @@ const AdminProfileFormPage = () => {
   const isEdit = !!id;
 
   const [formData, setFormData] = useState({
+    code: '',
     name: '',
     age: 21,
     city: '',
@@ -26,14 +27,16 @@ const AdminProfileFormPage = () => {
     lng: 37.6173,
     isActive: true,
     isFeatured: false,
+    rate1h: 10000,
+    rate2h: 18000,
+    rate3h: 25000,
     images: []
   });
 
   const [languageInput, setLanguageInput] = useState('');
   const [tagInput, setTagInput] = useState('');
-  const [imageInput, setImageInput] = useState('');
-  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -49,7 +52,7 @@ const AdminProfileFormPage = () => {
 
   const fetchProfile = async () => {
     try {
-      const { data } = await profilesAPI.getById(id);
+      const data = await profilesAPI.getById(id);
       setFormData(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -99,16 +102,6 @@ const AdminProfileFormPage = () => {
     });
   };
 
-  const handleAddImageUrl = () => {
-    if (imageInput.trim() && !formData.images.includes(imageInput.trim())) {
-      setFormData({
-        ...formData,
-        images: [...formData.images, imageInput.trim()]
-      });
-      setImageInput('');
-    }
-  };
-
   const handleRemoveImage = (img) => {
     setFormData({
       ...formData,
@@ -116,23 +109,27 @@ const AdminProfileFormPage = () => {
     });
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
     if (!file) return;
+    if (formData.images.length >= 3) {
+      toast.error('Можно загрузить максимум 3 фото');
+      return;
+    }
 
-    setUploading(true);
+    setUploadingImage(true);
     try {
-      const url = await uploadToCloudinary(file, 'profiles');
-      setFormData({
-        ...formData,
-        images: [...formData.images, url]
-      });
-      toast.success('Изображение загружено');
+      const data = await uploadsAPI.uploadProfileImage(file);
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, data.url].slice(0, 3)
+      }));
+      toast.success('Фото загружено');
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Ошибка загрузки изображения');
+      toast.error(error.message || 'Не удалось загрузить фото');
     } finally {
-      setUploading(false);
+      setUploadingImage(false);
     }
   };
 
@@ -141,6 +138,16 @@ const AdminProfileFormPage = () => {
     setLoading(true);
 
     try {
+      if (formData.images.length < 1) {
+        toast.error('Добавьте минимум 1 фото');
+        setLoading(false);
+        return;
+      }
+      if (formData.images.length > 3) {
+        toast.error('Допустимо максимум 3 фото');
+        setLoading(false);
+        return;
+      }
       if (isEdit) {
         await profilesAPI.update(id, formData);
         toast.success('Профиль обновлен');
@@ -181,6 +188,19 @@ const AdminProfileFormPage = () => {
           <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
             <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Основная информация</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">Код анкеты *</label>
+                <input
+                  type="text"
+                  name="code"
+                  value={formData.code}
+                  onChange={handleChange}
+                  required
+                  placeholder="anna-001"
+                  className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-3 px-0 outline-none"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">Имя *</label>
                 <input
@@ -303,13 +323,19 @@ const AdminProfileFormPage = () => {
           {/* Images */}
           <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
             <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Изображения</h2>
+            <p className="text-sm text-[#A1A1AA] mb-4">
+              Загружайте только файлы изображений. Максимум 3 фото, размер каждого до 5MB.
+            </p>
             
             <div className="mb-4">
-              <label className="block w-full cursor-pointer">
+              <label className={`block w-full cursor-pointer ${formData.images.length >= 3 ? 'opacity-60 cursor-not-allowed' : ''}`}>
                 <div className="border-2 border-dashed border-white/20 hover:border-[#D4AF37] p-8 text-center transition-colors">
-                  <Upload className="mx-auto mb-2 text-[#D4AF37]" size={32} />
                   <p className="text-sm text-[#A1A1AA]">
-                    {uploading ? 'Загрузка...' : 'Загрузить изображение'}
+                    {uploadingImage
+                      ? 'Загрузка фото...'
+                      : formData.images.length >= 3
+                        ? 'Достигнут лимит 3 фото'
+                        : 'Нажмите, чтобы выбрать и загрузить фото'}
                   </p>
                 </div>
                 <input
@@ -317,36 +343,16 @@ const AdminProfileFormPage = () => {
                   onChange={handleFileUpload}
                   accept="image/*"
                   className="hidden"
-                  disabled={uploading}
+                  disabled={uploadingImage || formData.images.length >= 3}
                 />
               </label>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm text-[#A1A1AA] mb-2">Или добавить URL</label>
-              <div className="flex space-x-2">
-                <input
-                  type="url"
-                  value={imageInput}
-                  onChange={(e) => setImageInput(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="flex-1 bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-2 px-0 outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddImageUrl}
-                  className="bg-[#D4AF37] text-[#050505] px-4 py-2 text-sm"
-                >
-                  Добавить
-                </button>
-              </div>
             </div>
 
             {formData.images.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {formData.images.map((img, idx) => (
                   <div key={idx} className="relative group">
-                    <img src={img} alt="" className="w-full h-32 object-cover rounded" />
+                    <img src={resolveMediaUrl(img)} alt="" className="w-full h-32 object-cover rounded" />
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(img)}
@@ -358,6 +364,24 @@ const AdminProfileFormPage = () => {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
+            <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Услуги и цены</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">1 час</label>
+                <input type="number" name="rate1h" value={formData.rate1h} onChange={handleChange} className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-3 px-0 outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">2 часа</label>
+                <input type="number" name="rate2h" value={formData.rate2h} onChange={handleChange} className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-3 px-0 outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">3 часа</label>
+                <input type="number" name="rate3h" value={formData.rate3h} onChange={handleChange} className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-3 px-0 outline-none" />
+              </div>
+            </div>
           </div>
 
           {/* Languages & Tags */}

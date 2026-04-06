@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Filter, X } from 'lucide-react';
 import ProfileCard from '../components/ProfileCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
-import { profilesAPI } from '../utils/api';
+import { profilesAPI } from '../services/api';
+import { toast } from 'sonner';
 
 const ProfilesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,6 +18,7 @@ const ProfilesPage = () => {
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
   const [sortBy, setSortBy] = useState('nearest');
+  const [codeQuery, setCodeQuery] = useState('');
 
   useEffect(() => {
     fetchProfiles();
@@ -33,10 +35,26 @@ const ProfilesPage = () => {
         active_only: true,
       };
       
-      const { data } = await profilesAPI.getAll(params);
+      const data = await profilesAPI.getAll(params);
       setProfiles(data);
     } catch (error) {
-      console.error('Error fetching profiles:', error);
+      toast.error(error.message || 'Ошибка загрузки анкет');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchByCode = async () => {
+    if (!codeQuery.trim()) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const profile = await profilesAPI.searchByCode(codeQuery.trim());
+      setProfiles([profile]);
+    } catch (error) {
+      setProfiles([]);
+      toast.error(error.message || 'Анкета не найдена');
     } finally {
       setLoading(false);
     }
@@ -85,6 +103,21 @@ const ProfilesPage = () => {
               {profiles.length} профилей рядом с вами в городе <span className="text-[#D4AF37]">{city}</span>
             </p>
           )}
+          <div className="mt-6 flex max-w-lg items-center gap-3">
+            <input
+              type="text"
+              value={codeQuery}
+              onChange={(e) => setCodeQuery(e.target.value)}
+              placeholder="Поиск по коду анкеты, например anna-001"
+              className="flex-1 bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-2 px-0 outline-none"
+            />
+            <button
+              onClick={handleSearchByCode}
+              className="bg-[#D4AF37] text-[#050505] hover:bg-[#F3E5AB] transition-colors py-2 px-4 text-sm uppercase tracking-widest"
+            >
+              Найти
+            </button>
+          </div>
         </motion.div>
 
         {/* Filters Bar */}

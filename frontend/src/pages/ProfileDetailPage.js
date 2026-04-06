@@ -4,7 +4,9 @@ import { motion } from 'framer-motion';
 import { MapPin, User, Ruler, Weight, Languages, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ProfileCard from '../components/ProfileCard';
-import { profilesAPI } from '../utils/api';
+import ProfileBookingForm from '../components/ProfileBookingForm';
+import { profilesAPI } from '../services/api';
+import { resolveMediaUrl } from '../lib/mediaUrl';
 
 const ProfileDetailPage = () => {
   const { id } = useParams();
@@ -21,7 +23,7 @@ const ProfileDetailPage = () => {
       setLoading(true);
       try {
         const params = city ? { city } : {};
-        const { data } = await profilesAPI.getById(id, params);
+        const data = await profilesAPI.getById(id, params);
         setProfile(data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -32,7 +34,7 @@ const ProfileDetailPage = () => {
 
     const fetchRelated = async () => {
       try {
-        const { data } = await profilesAPI.getAll({ city, active_only: true });
+        const data = await profilesAPI.getAll({ city, active_only: true });
         setRelatedProfiles(data.filter(p => p.id !== id).slice(0, 3));
       } catch (error) {
         console.error('Error fetching related profiles:', error);
@@ -47,7 +49,7 @@ const ProfileDetailPage = () => {
     setLoading(true);
     try {
       const params = city ? { city } : {};
-      const { data } = await profilesAPI.getById(id, params);
+      const data = await profilesAPI.getById(id, params);
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -58,7 +60,7 @@ const ProfileDetailPage = () => {
 
   const fetchRelatedProfiles = async () => {
     try {
-      const { data } = await profilesAPI.getAll({ city, active_only: true });
+      const data = await profilesAPI.getAll({ city, active_only: true });
       setRelatedProfiles(data.filter(p => p.id !== id).slice(0, 3));
     } catch (error) {
       console.error('Error fetching related profiles:', error);
@@ -94,7 +96,9 @@ const ProfileDetailPage = () => {
     );
   }
 
-  const imageUrl = profile.images?.[currentImageIndex] || profile.images?.[0] || 'https://images.unsplash.com/photo-1759933512107-e02a1328190d';
+  const imageUrl = resolveMediaUrl(
+    profile.images?.[currentImageIndex] || profile.images?.[0] || 'https://images.unsplash.com/photo-1759933512107-e02a1328190d'
+  );
 
   return (
     <div className="min-h-screen pt-20" data-testid="profile-detail-page">
@@ -264,14 +268,8 @@ const ProfileDetailPage = () => {
                   )}
                 </div>
 
-                <div className="mt-8">
-                  <Link
-                    to="/contacts"
-                    className="block w-full bg-[#D4AF37] text-[#050505] hover:bg-[#F3E5AB] transition-colors text-center py-4 uppercase tracking-widest text-sm font-medium"
-                    data-testid="contact-button"
-                  >
-                    Связаться
-                  </Link>
+                <div className="mt-8 border-t border-white/10 pt-6">
+                  <ProfileBookingForm profile={profile} />
                 </div>
               </motion.div>
             </div>
@@ -294,6 +292,7 @@ const ProfileDetailPage = () => {
           </div>
         </section>
       )}
+
     </div>
   );
 };

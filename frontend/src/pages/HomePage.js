@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star, Shield, Heart } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import HeroCitySearch from '../components/HeroCitySearch';
 import ProfileCard from '../components/ProfileCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
-import { profilesAPI } from '../utils/api';
+import WhyElegantSection from '../components/home/WhyElegantSection';
+import BookingStepsSection from '../components/home/BookingStepsSection';
+import ConfidentialitySection from '../components/home/ConfidentialitySection';
+import MeetingFormatsSection from '../components/home/MeetingFormatsSection';
+import FaqSection from '../components/home/FaqSection';
+import FinalCtaSection from '../components/home/FinalCtaSection';
+import { profilesAPI } from '../services/api';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -15,7 +21,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const { data } = await profilesAPI.getAll({ featured_only: true });
+        const data = await profilesAPI.getAll({ featured_only: true });
         setFeaturedProfiles(data.slice(0, 6));
       } catch (error) {
         console.error('Error fetching featured profiles:', error);
@@ -146,92 +152,15 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-24 md:py-32 bg-[#0A0A0A]/50" data-testid="features-section">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="text-center space-y-4"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5">
-                <Star className="text-[#D4AF37]" size={28} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-medium text-[#D4AF37]">
-                Премиум качество
-              </h3>
-              <p className="text-base text-[#A1A1AA] font-light leading-relaxed">
-                Тщательно отобранные профили с высочайшими стандартами качества и профессионализма
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-center space-y-4"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5">
-                <Shield className="text-[#D4AF37]" size={28} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-medium text-[#D4AF37]">
-                Конфиденциальность
-              </h3>
-              <p className="text-base text-[#A1A1AA] font-light leading-relaxed">
-                Полная гарантия конфиденциальности и защиты личных данных всех наших клиентов
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-center space-y-4"
-            >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5">
-                <Heart className="text-[#D4AF37]" size={28} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-medium text-[#D4AF37]">
-                Индивидуальный подход
-              </h3>
-              <p className="text-base text-[#A1A1AA] font-light leading-relaxed">
-                Персональный сервис и внимание к каждой детали для создания незабываемого опыта
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 md:py-32" data-testid="cta-section">
-        <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium tracking-tight text-[#F8F8F8] mb-6">
-              Готовы начать?
-            </h2>
-            <p className="text-base sm:text-lg text-[#A1A1AA] font-light leading-relaxed mb-12">
-              Откройте доступ к эксклюзивному каталогу премиум профилей
-            </p>
-            <button
-              onClick={() => navigate('/contacts')}
-              className="bg-transparent border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#050505] transition-all duration-300 uppercase tracking-widest text-sm py-4 px-12"
-              data-testid="contact-us-button"
-            >
-              Связаться с нами
-            </button>
-          </motion.div>
-        </div>
-      </section>
+      <WhyElegantSection />
+      <BookingStepsSection />
+      <ConfidentialitySection />
+      <MeetingFormatsSection />
+      <FaqSection />
+      <FinalCtaSection
+        onViewProfiles={() => navigate('/profiles')}
+        onOpenContacts={() => navigate('/contacts')}
+      />
     </div>
   );
 };

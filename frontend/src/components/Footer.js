@@ -17,7 +17,7 @@ const Footer = () => {
                 alt="L'Aura"
                 className="h-10 w-10"
               />
-              <span className="text-2xl font-medium text-[#D4AF37]">L'Aura</span>
+              <span className="text-2xl font-medium text-[#D4AF37]">Elegant</span>
             </div>
             <p className="text-sm text-[#71717A] leading-relaxed">
               Премиальный каталог избранных профилей. Утонченность, элегантность, конфиденциальность.
@@ -122,7 +122,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-sm text-[#71717A]">
-            © {currentYear} L'Aura. Все права защищены.
+            © {currentYear} Elegant. Все права защищены.
           </p>
           <p className="text-xs text-[#71717A] uppercase tracking-widest">
             Эскорт агентство

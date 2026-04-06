@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Edit, Trash2, Plus, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { profilesAPI } from '../../utils/api';
+import { profilesAPI } from '../../services/api';
 import { toast } from 'sonner';
 
 const AdminProfilesPage = () => {
@@ -22,7 +22,7 @@ const AdminProfilesPage = () => {
   const fetchProfiles = async () => {
     setLoading(true);
     try {
-      const { data } = await profilesAPI.getAll({ active_only: false });
+      const data = await profilesAPI.getAll({ active_only: false });
       setProfiles(data);
     } catch (error) {
       console.error('Error fetching profiles:', error);

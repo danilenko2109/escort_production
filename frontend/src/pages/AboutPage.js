@@ -17,7 +17,7 @@ const AboutPage = () => {
             О нас
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tighter leading-none text-[#F8F8F8] mb-6">
-            L'Aura
+            Elegant
           </h1>
           <p className="text-lg text-[#A1A1AA] leading-relaxed">
             Премиальное агентство по подбору элитных спутниц

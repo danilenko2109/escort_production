@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Star } from 'lucide-react';
+import { resolveMediaUrl } from '../lib/mediaUrl';
 
 const ProfileCard = ({ profile, city }) => {
-  const imageUrl = profile.images?.[0] || 'https://images.unsplash.com/photo-1759933512107-e02a1328190d';
+  const imageUrl = resolveMediaUrl(profile.images?.[0] || 'https://images.unsplash.com/photo-1759933512107-e02a1328190d');
   
   return (
     <motion.div

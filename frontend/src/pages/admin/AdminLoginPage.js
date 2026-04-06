@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, User } from 'lucide-react';
-import { adminAPI } from '../../utils/api';
+import { adminAPI } from '../../services/api';
 import { toast } from 'sonner';
 
 const AdminLoginPage = () => {
@@ -25,7 +25,7 @@ const AdminLoginPage = () => {
     setLoading(true);
 
     try {
-      const { data } = await adminAPI.login(credentials);
+      const data = await adminAPI.login(credentials);
       localStorage.setItem('admin_token', data.token);
       localStorage.setItem('admin_username', data.username);
       toast.success('Вход выполнен успешно');

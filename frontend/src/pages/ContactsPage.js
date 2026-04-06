@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { contactAPI } from '../utils/api';
+import { contactAPI } from '../services/api';
 import { toast } from 'sonner';
 
 const ContactsPage = () => {
@@ -87,14 +87,13 @@ const ContactsPage = () => {
 
               <div>
                 <label className="block text-sm text-[#A1A1AA] mb-2 uppercase tracking-widest">
-                  Email *
+                  Email
                 </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
                   className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-3 px-0 outline-none transition-colors"
                   data-testid="contact-email-input"
                 />
