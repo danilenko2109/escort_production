@@ -53,13 +53,13 @@
   .hero-lips-bg::before {
     content: '';
     position: absolute;
-    inset: -25% -10%;
-    background-image: url('data:image/svg+xml,%3Csvg width="1200" height="520" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M82 265C181 229 307 154 430 140C524 130 564 168 600 168C636 168 676 130 770 140C893 154 1019 229 1118 265" stroke="%23D4AF37" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M96 265C185 293 305 356 436 374C517 386 566 338 600 338C634 338 683 386 764 374C895 356 1015 293 1104 265" stroke="%23D4AF37" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M158 265C245 249 388 225 508 243C563 251 583 274 600 274C617 274 637 251 692 243C812 225 955 249 1042 265" stroke="%23D4AF37" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/%3E%3C/svg%3E');
+    inset: -28% -12%;
+    background-image: url('data:image/svg+xml,%3Csvg width="1600" height="780" viewBox="0 0 1600 780" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M108 392C240 345 403 247 565 227C689 211 742 261 790 261C838 261 891 211 1015 227C1177 247 1340 345 1472 392" stroke="%23D4AF37" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/%3E%3Cpath d="M122 392C241 430 398 513 573 538C680 553 744 489 790 489C836 489 900 553 1007 538C1182 513 1339 430 1458 392" stroke="%23D4AF37" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/%3E%3Cpath d="M202 392C318 371 508 339 668 363C741 374 768 405 790 405C812 405 839 374 912 363C1072 339 1262 371 1378 392" stroke="%23B78720" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.36"/%3E%3Cpath d="M248 451C343 407 531 384 681 411C739 422 765 447 790 447C815 447 841 422 899 411C1049 384 1237 407 1332 451" stroke="%23B78720" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.33"/%3E%3C/svg%3E');
     background-repeat: no-repeat;
     background-position: center;
-    background-size: min(1600px, 130vw);
-    opacity: 0.2;
-    filter: blur(2px);
+    background-size: min(1900px, 140vw);
+    opacity: 0.35;
+    filter: blur(1.5px);
     pointer-events: none;
   }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import goldLips from '../assets/gold-lips.svg';
+import goldLipsIcon from '../assets/gold-lips-icon.svg';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,8 +40,8 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group" data-testid="logo-link">
-            <div className="h-10 w-10 border border-[#D4AF37]/40 bg-[#050505] flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-              <img src={goldLips} alt="Lips logo" className="w-6 h-6 object-contain opacity-90" />
+            <div className="h-12 w-12 border border-[#D4AF37]/35 bg-[#050505]/95 flex items-center justify-center shadow-[0_0_22px_rgba(212,175,55,0.12)]">
+              <img src={goldLipsIcon} alt="Lips logo" className="w-9 h-9 object-contain opacity-95" />
             </div>
           </Link>
 

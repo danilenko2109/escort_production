@@ -60,12 +60,21 @@ const ProfilesPage = () => {
   };
 
   const handleApplyFilters = () => {
+    const normalizedCity = city.trim();
     const params = {};
-    if (city) params.city = city;
+    if (normalizedCity) params.city = normalizedCity;
     if (minAge) params.min_age = minAge;
     if (maxAge) params.max_age = maxAge;
     if (sortBy) params.sort_by = sortBy;
-    
+
+    if (normalizedCity) {
+      localStorage.setItem('searchCity', normalizedCity);
+      setCity(normalizedCity);
+    } else {
+      localStorage.removeItem('searchCity');
+      setCity('');
+    }
+
     setSearchParams(params);
     fetchProfiles();
     setShowFilters(false);
