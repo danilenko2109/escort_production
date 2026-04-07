@@ -167,7 +167,7 @@ const ProfileDetailPage = () => {
                       {profile.name}
                     </h1>
                     <p className="text-lg text-[#A1A1AA]">
-                      {profile.age} лет • {profile.city}
+                      {profile.age} лет • {city || profile.city}
                     </p>
                   </div>
                 </div>

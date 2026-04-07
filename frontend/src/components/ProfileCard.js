@@ -6,6 +6,7 @@ import { resolveMediaUrl } from '../lib/mediaUrl';
 
 const ProfileCard = ({ profile, city }) => {
   const imageUrl = resolveMediaUrl(profile.images?.[0] || 'https://images.unsplash.com/photo-1759933512107-e02a1328190d');
+  const displayCity = city || localStorage.getItem('searchCity') || profile.city;
   
   return (
     <motion.div
@@ -46,7 +47,7 @@ const ProfileCard = ({ profile, city }) => {
               {profile.name}
             </Link>
             <p className="text-sm text-[#A1A1AA] mt-1">
-              {profile.age} лет • {profile.city} 
+              {profile.age} лет • {displayCity} 
             </p>
           </div>
         </div>
