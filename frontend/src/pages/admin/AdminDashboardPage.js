@@ -80,7 +80,13 @@ const AdminDashboardPage = () => {
               src="https://static.prod-images.emergentagent.com/jobs/f41ef10d-503e-475e-a135-ee7599651f36/images/30320a469abc9ef11934f2395777f5d918f47b0d41203d5fbbbeffcbea2827b9.png"
               alt="L'Aura"
               className="h-10 w-10"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                const fallback = e.currentTarget.parentElement?.querySelector('[data-logo-fallback]');
+                if (fallback) fallback.classList.remove('hidden');
+              }}
             />
+            <span data-logo-fallback className="hidden text-2xl" aria-hidden="true">💋</span>
             <h1 className="text-2xl font-medium text-[#D4AF37]">Админ-панель</h1>
           </div>
           <button

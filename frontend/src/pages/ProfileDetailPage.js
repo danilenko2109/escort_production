@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, User, Ruler, Weight, Languages, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ProfileCard from '../components/ProfileCard';
-import ProfileBookingForm from '../components/ProfileBookingForm';
 import { profilesAPI } from '../services/api';
 import { resolveMediaUrl } from '../lib/mediaUrl';
 
 const ProfileDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const city = searchParams.get('city') || '';
+  const city = searchParams.get('city') || localStorage.getItem('searchCity') || '';
   
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [relatedProfiles, setRelatedProfiles] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+
+  useEffect(() => {
+    if (!city) {
+      navigate('/profiles', { replace: true });
+    }
+  }, [city, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,27 +52,6 @@ const ProfileDetailPage = () => {
     fetchRelated();
   }, [id, city]);
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const params = city ? { city } : {};
-      const data = await profilesAPI.getById(id, params);
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchRelatedProfiles = async () => {
-    try {
-      const data = await profilesAPI.getAll({ city, active_only: true });
-      setRelatedProfiles(data.filter(p => p.id !== id).slice(0, 3));
-    } catch (error) {
-      console.error('Error fetching related profiles:', error);
-    }
-  };
 
   const nextImage = () => {
     if (profile?.images) {
@@ -116,7 +102,7 @@ const ProfileDetailPage = () => {
 
       {/* Hero Gallery */}
       <section className="relative" data-testid="profile-gallery">
-        <div className="relative h-[70vh] overflow-hidden">
+        <div className="relative mx-auto h-[70vh] max-w-2xl overflow-hidden md:h-[75vh] md:rounded-sm">
           <motion.img
             key={currentImageIndex}
             initial={{ opacity: 0 }}
@@ -269,7 +255,12 @@ const ProfileDetailPage = () => {
                 </div>
 
                 <div className="mt-8 border-t border-white/10 pt-6">
-                  <ProfileBookingForm profile={profile} />
+                  <Link
+                    to={`/profiles/${profile.id}/request${city ? `?city=${encodeURIComponent(city)}` : ''}`}
+                    className="block w-full bg-[#D4AF37] py-3 text-center text-sm font-medium uppercase tracking-[0.2em] text-[#050505] transition-colors hover:bg-[#F3E5AB]"
+                  >
+                    Оформить заявку
+                  </Link>
                 </div>
               </motion.div>
             </div>
