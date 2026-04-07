@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -72,7 +72,7 @@ const ProfileBookingForm = ({ profile }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [bookingPhone, setBookingPhone] = useState('+7 (900) 000-00-00');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadBookingPhone = async () => {
       try {
         const data = await settingsAPI.getBookingPhone();
@@ -83,6 +83,13 @@ const ProfileBookingForm = ({ profile }) => {
     };
     loadBookingPhone();
   }, []);
+
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showSuccessModal]);
 
   const price = useMemo(() => {
     if (!profile) return 0;
@@ -170,8 +177,8 @@ const ProfileBookingForm = ({ profile }) => {
       <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#D4AF37]">Бронирование</p>
-          <h3 className="mt-1 text-xl font-medium text-[#F8F8F8] sm:text-2xl">Оформление встречи</h3>
-          <p className="mt-1 text-sm text-[#71717A]">Шаг до оплаты — только подтверждение с менеджером</p>
+          <h3 className="mt-1 text-xl font-medium text-[#F8F8F8] sm:text-2xl">Премиум оформление заявки</h3>
+          <p className="mt-1 text-sm text-[#71717A]">Быстрая форма, проверка деталей и сопровождение менеджером до подтверждения</p>
         </div>
         <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-[#D4AF37]/25 bg-[#D4AF37]/5 sm:flex">
           <Sparkles className="text-[#D4AF37]" size={18} />
@@ -429,8 +436,8 @@ const ProfileBookingForm = ({ profile }) => {
           <div className="w-full max-w-md rounded-sm border border-[#D4AF37]/30 bg-[#0A0A0A] p-8 shadow-[0_0_80px_-20px_rgba(212,175,55,0.35)]">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-2xl font-medium text-[#D4AF37]">Заявка почти готова</h3>
-                <p className="mt-4 text-sm uppercase tracking-widest text-[#A1A1AA]">Ваша сумма заказа</p>
+                <h3 className="text-2xl font-medium text-[#D4AF37]">Заявка принята</h3>
+                <p className="mt-4 text-sm uppercase tracking-widest text-[#A1A1AA]">Сумма к оплате</p>
               </div>
               <button
                 onClick={() => {
@@ -443,8 +450,11 @@ const ProfileBookingForm = ({ profile }) => {
               </button>
             </div>
             <p className="mt-2 text-4xl font-medium tracking-tight text-[#F8F8F8]">{formatRub(price)}</p>
-            <p className="mt-5 text-[#A1A1AA]">Для подтверждения отправьте сумму на указанные реквизиты</p>
+            <p className="mt-5 text-[#A1A1AA]">Оплатите заявку по реквизитам ниже и сохраните квитанцию об оплате.</p>
             <p className="mt-2 text-3xl font-medium tracking-tight text-[#D4AF37]">{bookingPhone}</p>
+            <div className="mt-6 rounded-sm border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-4 text-sm text-[#F8F8F8]">
+              После оплаты отправьте квитанцию в тех поддержку, что бы менеджер мог выдать вам адрес или подтвердить выезд для девушки.
+            </div>
             <button
               type="button"
               onClick={() => {
@@ -453,7 +463,7 @@ const ProfileBookingForm = ({ profile }) => {
               }}
               className="mt-8 w-full bg-[#D4AF37] text-[#050505] hover:bg-[#F3E5AB] py-3 uppercase tracking-widest text-sm"
             >
-              Понятно
+              Готово
             </button>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -22,6 +23,7 @@ import AdminProfileFormPage from './pages/admin/AdminProfileFormPage';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="App">
         <Toaster 
           position="top-right"
