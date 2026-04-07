@@ -12,11 +12,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1">
             <div className="flex items-center space-x-3 mb-4">
-              <img
-                src="https://static.prod-images.emergentagent.com/jobs/f41ef10d-503e-475e-a135-ee7599651f36/images/30320a469abc9ef11934f2395777f5d918f47b0d41203d5fbbbeffcbea2827b9.png"
-                alt="L'Aura"
-                className="h-10 w-10"
-              />
+              <div className="h-10 w-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xs font-semibold">LA</div>
               <span className="text-2xl font-medium text-[#D4AF37]">Elegant</span>
             </div>
             <p className="text-sm text-[#71717A] leading-relaxed">

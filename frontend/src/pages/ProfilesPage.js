@@ -97,9 +97,13 @@ const ProfilesPage = () => {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tighter leading-none text-[#F8F8F8] mb-4">
             Профили
           </h1>
-          {city && (
+          {city ? (
             <p className="text-base text-[#A1A1AA]">
               Показываем {profiles.length} анкет для города <span className="text-[#D4AF37]">{city}</span>.
+            </p>
+          ) : (
+            <p className="text-base text-[#A1A1AA]">
+              Чтобы открыть анкету, сначала укажите ваш город в фильтрах.
             </p>
           )}
           <div className="mt-6 flex max-w-lg items-center gap-3">
