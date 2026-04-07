@@ -92,11 +92,7 @@ const HomePage = () => {
             <HeroCitySearch onSearch={handleCitySearch} />
           </div>
 
-          {selectedCity && (
-            <p className="mt-6 text-sm text-[#D4AF37]">
-              Отлично! Покажем все доступные анкеты как будто они находятся в городе {selectedCity}.
-            </p>
-          )}
+       
 
           <motion.div
             initial={{ opacity: 0 }}
