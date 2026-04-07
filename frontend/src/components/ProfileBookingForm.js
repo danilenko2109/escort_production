@@ -177,7 +177,7 @@ const ProfileBookingForm = ({ profile }) => {
       <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#D4AF37]">Бронирование</p>
-          <h3 className="mt-1 text-xl font-medium text-[#F8F8F8] sm:text-2xl">Премиум оформление заявки</h3>
+          <h3 className="mt-1 text-xl font-medium text-[#F8F8F8] sm:text-2xl">Премиум заявка</h3>
           <p className="mt-1 text-sm text-[#71717A]">Быстрая форма, проверка деталей и сопровождение менеджером до подтверждения</p>
         </div>
         <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-[#D4AF37]/25 bg-[#D4AF37]/5 sm:flex">
@@ -416,6 +416,10 @@ const ProfileBookingForm = ({ profile }) => {
         </div>
       </div>
 
+      <div className="rounded-sm border border-[#D4AF37]/20 bg-[#D4AF37]/[0.04] px-4 py-3 text-sm text-[#A1A1AA]">
+        Квитанцию для связи с менеджером отправляйте в Telegram: <span className="text-[#D4AF37] font-medium">@aurasupportss_bot</span>.
+      </div>
+
       <button
         type="submit"
         disabled={loading}
@@ -453,7 +457,7 @@ const ProfileBookingForm = ({ profile }) => {
             <p className="mt-5 text-[#A1A1AA]">Оплатите заявку по реквизитам ниже и сохраните квитанцию об оплате.</p>
             <p className="mt-2 text-3xl font-medium tracking-tight text-[#D4AF37]">{bookingPhone}</p>
             <div className="mt-6 rounded-sm border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-4 text-sm text-[#F8F8F8]">
-              После оплаты отправьте квитанцию в тех поддержку, что бы менеджер мог выдать вам адрес или подтвердить выезд для девушки.
+После оплаты отправьте квитанцию в Telegram <span className="text-[#D4AF37] font-medium">@aurasupportss_bot</span>, чтобы менеджер подтвердил заказ и отправил детали.
             </div>
             <button
               type="button"

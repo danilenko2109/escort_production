@@ -9,6 +9,7 @@ import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import ProfilesPage from './pages/ProfilesPage';
 import ProfileDetailPage from './pages/ProfileDetailPage';
+import ProfileRequestPage from './pages/ProfileRequestPage';
 import AboutPage from './pages/AboutPage';
 import ContactsPage from './pages/ContactsPage';
 import PrivacyPage from './pages/PrivacyPage';
@@ -54,6 +55,7 @@ function App() {
                   <Route path="/" element={<HomePage />} />
                   <Route path="/profiles" element={<ProfilesPage />} />
                   <Route path="/profiles/:id" element={<ProfileDetailPage />} />
+                  <Route path="/profiles/:id/request" element={<ProfileRequestPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/contacts" element={<ContactsPage />} />
                   <Route path="/privacy" element={<PrivacyPage />} />

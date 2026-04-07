@@ -46,11 +46,6 @@ const HomePage = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden" data-testid="hero-section">
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          <img
-            src="https://static.prod-images.emergentagent.com/jobs/f41ef10d-503e-475e-a135-ee7599651f36/images/a73d048f61a4c0d4b149a030890d7006ebebd95b5ba4d312651dcf5f78e1a1d3.png"
-            alt="Hero Background"
-            className="w-full h-full object-cover opacity-30"
-          />
           <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/50 via-[#050505]/70 to-[#050505]" />
         </div>
 
