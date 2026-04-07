@@ -11,6 +11,7 @@ import MeetingFormatsSection from '../components/home/MeetingFormatsSection';
 import FaqSection from '../components/home/FaqSection';
 import FinalCtaSection from '../components/home/FinalCtaSection';
 import { profilesAPI } from '../services/api';
+import goldLips from '../assets/gold-lips.svg';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -45,8 +46,13 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden" data-testid="hero-section">
         {/* Background */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/50 via-[#050505]/70 to-[#050505]" />
+        <div className="absolute inset-0 z-0 hero-lips-bg">
+          <div
+            className="absolute inset-0 opacity-[0.18] bg-center bg-no-repeat bg-cover md:bg-contain"
+            style={{ backgroundImage: `url(${goldLips})` }}
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/55 via-[#050505]/78 to-[#050505]" />
         </div>
 
         {/* Decorative floating elements */}
@@ -85,12 +91,6 @@ const HomePage = () => {
           <div className="max-w-2xl mx-auto">
             <HeroCitySearch onSearch={handleCitySearch} />
           </div>
-
-          {selectedCity && (
-            <p className="mt-6 text-sm text-[#D4AF37]">
-              Отлично! Покажем все доступные анкеты как будто они находятся в городе {selectedCity}.
-            </p>
-          )}
 
           <motion.div
             initial={{ opacity: 0 }}

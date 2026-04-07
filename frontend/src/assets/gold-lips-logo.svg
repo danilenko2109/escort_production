@@ -1,0 +1,25 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldStroke" x1="20" y1="26" x2="76" y2="68" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B6A12"/>
+      <stop offset="0.45" stop-color="#F2CF6D"/>
+      <stop offset="1" stop-color="#A67E1C"/>
+    </linearGradient>
+    <filter id="glow" x="6" y="24" width="84" height="48" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="1.1" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#glow)">
+    <path d="M20 48C29 40 37 35 46 35C48 35 50 36.5 52 36.5C54 36.5 56 35 58 35C67 35 75 40 84 48"
+      stroke="url(#goldStroke)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20 48C30 55 38 60 48 61C58 60 66 55 76 48"
+      stroke="url(#goldStroke)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M29 48C35 46.2 41 45.2 48 46.3C55 45.2 61 46.2 67 48"
+      stroke="url(#goldStroke)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  </g>
+</svg>

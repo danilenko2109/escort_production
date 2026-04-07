@@ -46,7 +46,7 @@ const ProfileCard = ({ profile, city }) => {
               {profile.name}
             </Link>
             <p className="text-sm text-[#A1A1AA] mt-1">
-              {profile.age} лет • {profile.city} (место рождения)
+              {profile.age} лет • {profile.city}
             </p>
           </div>
         </div>
