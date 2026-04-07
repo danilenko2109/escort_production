@@ -28,7 +28,6 @@ const ProfilesPage = () => {
     setLoading(true);
     try {
       const params = {
-        city: city || undefined,
         min_age: minAge || undefined,
         max_age: maxAge || undefined,
         sort_by: sortBy,
@@ -100,7 +99,7 @@ const ProfilesPage = () => {
           </h1>
           {city && (
             <p className="text-base text-[#A1A1AA]">
-              {profiles.length} профилей рядом с вами в городе <span className="text-[#D4AF37]">{city}</span>
+              Показываем {profiles.length} анкет для города <span className="text-[#D4AF37]">{city}</span>.
             </p>
           )}
           <div className="mt-6 flex max-w-lg items-center gap-3">
@@ -141,7 +140,7 @@ const ProfilesPage = () => {
               className="bg-[#0A0A0A] border border-white/20 text-white text-sm py-2 px-4 focus:border-[#D4AF37] outline-none"
               data-testid="sort-select"
             >
-              <option value="nearest">Ближайшие</option>
+              <option value="nearest">Рекомендуемые</option>
               <option value="newest">Новые</option>
               <option value="featured">VIP</option>
             </select>
@@ -170,6 +169,9 @@ const ProfilesPage = () => {
                   className="w-full bg-transparent border-b border-white/20 focus:border-[#D4AF37] text-white py-2 px-0 outline-none"
                   data-testid="filter-city-input"
                 />
+                <p className="mt-2 text-xs text-[#71717A]">
+                  Город используется для персонализации витрины: анкеты показываются как доступные в выбранном городе.
+                </p>
               </div>
 
               <div>
