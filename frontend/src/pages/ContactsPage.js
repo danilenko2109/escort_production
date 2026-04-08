@@ -39,7 +39,7 @@ const ContactsPage = () => {
   return (
     <div className="min-h-screen pt-32 pb-24" data-testid="contacts-page">
       <div className="max-w-6xl mx-auto px-6 md:px-12">
-        {/* Header */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -58,7 +58,7 @@ const ContactsPage = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
+          
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -147,7 +147,7 @@ const ContactsPage = () => {
             </form>
           </motion.div>
 
-          {/* Contact Info */}
+          
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}

@@ -6,7 +6,7 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen pt-32 pb-24" data-testid="about-page">
       <div className="max-w-5xl mx-auto px-6 md:px-12">
-        {/* Header */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -26,7 +26,7 @@ const AboutPage = () => {
 
         <div className="lips-divider mb-16"></div>
 
-        {/* Story */}
+        
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -50,7 +50,7 @@ const AboutPage = () => {
           </div>
         </motion.div>
 
-        {/* Values */}
+        
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ const AboutPage = () => {
 
         <div className="lips-divider mb-16"></div>
 
-        {/* CTA */}
+        
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}

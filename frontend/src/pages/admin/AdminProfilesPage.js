@@ -66,7 +66,7 @@ const AdminProfilesPage = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] pt-20 pb-12" data-testid="admin-profiles-page">
-      {/* Header */}
+      
       <div className="border-b border-white/5 mb-8">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-6">
           <div className="flex items-center justify-between mb-4">

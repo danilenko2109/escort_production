@@ -72,7 +72,7 @@ const AdminDashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] pt-20" data-testid="admin-dashboard">
-      {/* Header */}
+      
       <div className="border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-6 flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -119,7 +119,7 @@ const AdminDashboardPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
-        {/* Stats Grid */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -174,7 +174,7 @@ const AdminDashboardPage = () => {
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
+        
         <div className="mb-12">
           <h2 className="text-2xl font-medium text-[#D4AF37] mb-6">Быстрые действия</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -200,7 +200,7 @@ const AdminDashboardPage = () => {
           </div>
         </div>
 
-        {/* Navigation */}
+        
         <div className="border-t border-white/5 pt-8">
           <Link
             to="/"

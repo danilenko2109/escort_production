@@ -18,7 +18,6 @@ const ProfileDetailPage = () => {
   const [relatedProfiles, setRelatedProfiles] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-
   useEffect(() => {
     if (!city) {
       navigate('/profiles', { replace: true });
@@ -51,7 +50,6 @@ const ProfileDetailPage = () => {
     fetchData();
     fetchRelated();
   }, [id, city]);
-
 
   const nextImage = () => {
     if (profile?.images) {
@@ -88,7 +86,7 @@ const ProfileDetailPage = () => {
 
   return (
     <div className="min-h-screen pt-20" data-testid="profile-detail-page">
-      {/* Back Button */}
+      
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-6">
         <Link
           to={`/profiles${city ? `?city=${city}` : ''}`}
@@ -100,7 +98,7 @@ const ProfileDetailPage = () => {
         </Link>
       </div>
 
-      {/* Hero Gallery */}
+      
       <section className="relative" data-testid="profile-gallery">
         <div className="relative mx-auto h-[70vh] max-w-2xl overflow-hidden md:h-[75vh] md:rounded-sm">
           <motion.img
@@ -114,7 +112,7 @@ const ProfileDetailPage = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
 
-          {/* Gallery Navigation */}
+          
           {profile.images && profile.images.length > 1 && (
             <>
               <button
@@ -132,7 +130,7 @@ const ProfileDetailPage = () => {
                 <ChevronRight size={24} />
               </button>
 
-              {/* Image indicators */}
+              
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">
                 {profile.images.map((_, idx) => (
                   <button
@@ -150,11 +148,11 @@ const ProfileDetailPage = () => {
         </div>
       </section>
 
-      {/* Profile Content */}
+      
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Main Info */}
+            
             <div className="lg:col-span-2 space-y-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -190,7 +188,7 @@ const ProfileDetailPage = () => {
               </motion.div>
             </div>
 
-            {/* Sidebar */}
+            
             <div className="lg:col-span-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -268,7 +266,7 @@ const ProfileDetailPage = () => {
         </div>
       </section>
 
-      {/* Related Profiles */}
+      
       {relatedProfiles.length > 0 && (
         <section className="py-16 bg-[#0A0A0A]/50" data-testid="related-profiles">
           <div className="max-w-7xl mx-auto px-6 md:px-12">

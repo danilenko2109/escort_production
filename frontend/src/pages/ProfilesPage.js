@@ -12,8 +12,6 @@ const ProfilesPage = () => {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Filters
   const [city, setCity] = useState(searchParams.get('city') || localStorage.getItem('searchCity') || '');
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
@@ -93,7 +91,7 @@ const ProfilesPage = () => {
   return (
     <div className="min-h-screen pt-32 pb-24" data-testid="profiles-page">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        {/* Header */}
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -132,7 +130,7 @@ const ProfilesPage = () => {
           </div>
         </motion.div>
 
-        {/* Filters Bar */}
+        
         <div className="mb-8 flex items-center justify-between">
           <button
             onClick={() => setShowFilters(!showFilters)}
@@ -160,7 +158,7 @@ const ProfilesPage = () => {
           </div>
         </div>
 
-        {/* Filters Panel */}
+        
         {showFilters && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -235,7 +233,7 @@ const ProfilesPage = () => {
           </motion.div>
         )}
 
-        {/* Profiles Grid */}
+        
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (

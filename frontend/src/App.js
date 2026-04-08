@@ -4,8 +4,6 @@ import { Toaster } from 'sonner';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-
-// Pages
 import HomePage from './pages/HomePage';
 import ProfilesPage from './pages/ProfilesPage';
 import ProfileDetailPage from './pages/ProfileDetailPage';
@@ -14,8 +12,6 @@ import AboutPage from './pages/AboutPage';
 import ContactsPage from './pages/ContactsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
-
-// Admin Pages
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProfilesPage from './pages/admin/AdminProfilesPage';
@@ -38,14 +34,14 @@ function App() {
         />
         
         <Routes>
-          {/* Admin Routes (no header/footer) */}
+          
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin" element={<AdminDashboardPage />} />
           <Route path="/admin/profiles" element={<AdminProfilesPage />} />
           <Route path="/admin/profiles/new" element={<AdminProfileFormPage />} />
           <Route path="/admin/profiles/:id/edit" element={<AdminProfileFormPage />} />
 
-          {/* Public Routes (with header/footer) */}
+          
           <Route
             path="/*"
             element={

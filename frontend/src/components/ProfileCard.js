@@ -17,7 +17,7 @@ const ProfileCard = ({ profile, city }) => {
       className="relative group overflow-hidden bg-[#0A0A0A] border border-white/5 hover:border-[#D4AF37]/30 transition-all duration-500 rounded-sm"
       data-testid={`profile-card-${profile.id}`}
     >
-      {/* Featured Badge */}
+      
       {profile.isFeatured && (
         <div className="absolute top-4 right-4 z-10 bg-[#D4AF37] text-[#050505] px-3 py-1 text-xs uppercase tracking-widest font-medium rounded-sm flex items-center space-x-1">
           <Star size={12} fill="currentColor" />
@@ -25,7 +25,7 @@ const ProfileCard = ({ profile, city }) => {
         </div>
       )}
 
-      {/* Image */}
+      
       <Link to={`/profiles/${profile.id}${city ? `?city=${city}` : ''}`} className="block relative overflow-hidden aspect-[3/4]">
         <img
           src={imageUrl}
@@ -35,7 +35,7 @@ const ProfileCard = ({ profile, city }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </Link>
 
-      {/* Content */}
+      
       <div className="p-6 space-y-3">
         <div className="flex items-start justify-between">
           <div>
@@ -52,7 +52,7 @@ const ProfileCard = ({ profile, city }) => {
           </div>
         </div>
 
-        {/* Distance */}
+        
         {profile.distance !== undefined && (
           <div className="flex items-center space-x-2 text-[#D4AF37] text-sm">
             <MapPin size={14} />
@@ -60,12 +60,12 @@ const ProfileCard = ({ profile, city }) => {
           </div>
         )}
 
-        {/* Description */}
+        
         <p className="text-sm text-[#71717A] line-clamp-2">
           {profile.descriptionShort}
         </p>
 
-        {/* Tags */}
+        
         {profile.tags && profile.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-2">
             {profile.tags.slice(0, 3).map((tag, idx) => (
@@ -79,7 +79,7 @@ const ProfileCard = ({ profile, city }) => {
           </div>
         )}
 
-        {/* CTA */}
+        
         <Link
           to={`/profiles/${profile.id}${city ? `?city=${city}` : ''}`}
           className="block w-full mt-4 bg-transparent border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#050505] transition-all duration-300 uppercase tracking-widest text-xs py-3 text-center"
@@ -89,7 +89,7 @@ const ProfileCard = ({ profile, city }) => {
         </Link>
       </div>
 
-      {/* Hover glow effect */}
+      
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <div className="absolute inset-0 shadow-[0_10px_40px_-10px_rgba(212,175,55,0.15)]" />
       </div>

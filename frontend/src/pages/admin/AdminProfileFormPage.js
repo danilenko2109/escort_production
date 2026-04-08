@@ -166,7 +166,7 @@ const AdminProfileFormPage = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] pt-20 pb-12" data-testid="admin-profile-form-page">
-      {/* Header */}
+      
       <div className="border-b border-white/5 mb-8">
         <div className="max-w-4xl mx-auto px-6 md:px-12 py-6">
           <h1 className="text-3xl font-medium text-[#D4AF37] mb-4">
@@ -184,7 +184,7 @@ const AdminProfileFormPage = () => {
 
       <div className="max-w-4xl mx-auto px-6 md:px-12">
         <form onSubmit={handleSubmit} className="space-y-8" data-testid="profile-form">
-          {/* Basic Info */}
+          
           <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
             <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Основная информация</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -320,7 +320,7 @@ const AdminProfileFormPage = () => {
             </div>
           </div>
 
-          {/* Images */}
+          
           <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
             <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Изображения</h2>
             <p className="text-sm text-[#A1A1AA] mb-4">
@@ -384,7 +384,7 @@ const AdminProfileFormPage = () => {
             </div>
           </div>
 
-          {/* Languages & Tags */}
+          
           <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
             <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Языки и теги</h2>
             
@@ -457,7 +457,7 @@ const AdminProfileFormPage = () => {
             </div>
           </div>
 
-          {/* Status */}
+          
           <div className="bg-[#0A0A0A] border border-white/10 p-8 rounded-sm">
             <h2 className="text-xl font-medium text-[#D4AF37] mb-6">Статус</h2>
             <div className="space-y-4">
@@ -486,7 +486,7 @@ const AdminProfileFormPage = () => {
             </div>
           </div>
 
-          {/* Submit */}
+          
           <div className="flex space-x-4">
             <button
               type="submit"
