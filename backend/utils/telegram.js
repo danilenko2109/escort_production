@@ -2,7 +2,19 @@ const sendTelegramMessage = async (text) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
-  if (!token || !chatId) return false;
+  if (!token || !chatId) {
+    throw new Error("TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы");
+  }
+
+  const tokenLooksValid = /^\d+:[\w-]{20,}$/.test(token);
+  if (!tokenLooksValid) {
+    throw new Error("TELEGRAM_BOT_TOKEN имеет некорректный формат");
+  }
+
+  const chatIdLooksValid = /^-?\d+$/.test(String(chatId));
+  if (!chatIdLooksValid) {
+    throw new Error("TELEGRAM_CHAT_ID должен быть числом");
+  }
 
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',

@@ -37,13 +37,19 @@ const submitContact = async (req, res) => {
     `<b>Дата/время:</b> ${new Date().toLocaleString("ru-RU")}`,
   ].join("\n");
 
+  let telegramDelivered = true;
   try {
     await sendTelegramMessage(telegramText);
   } catch (error) {
+    telegramDelivered = false;
     console.error("Telegram send failed:", error.message);
   }
 
-  return res.status(201).json({ message: "Message sent successfully", id: String(result.lastInsertRowid) });
+  return res.status(201).json({
+    message: "Message sent successfully",
+    id: String(result.lastInsertRowid),
+    telegramDelivered,
+  });
 };
 
 module.exports = { submitContact };
