@@ -54,15 +54,18 @@ const submitBookingRequest = async (req, res) => {
     `<b>Создано:</b> ${new Date().toLocaleString('ru-RU')}`,
   ].join('\n');
 
+  let telegramDelivered = true;
   try {
     await sendTelegramMessage(telegramText);
   } catch (error) {
+    telegramDelivered = false;
     console.error('Telegram send failed:', error.message);
   }
 
   return res.status(201).json({
     message: 'Заявка принята',
     phone: bookingPhone || '+7 (900) 000-00-00',
+    telegramDelivered,
   });
 };
 
