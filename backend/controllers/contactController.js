@@ -1,6 +1,9 @@
 const db = require("../src/database/db");
 
-const { sendTelegramMessage } = require('../utils/telegram');
+const {
+  sendTelegramMessage,
+  formatContactTelegramMessage,
+} = require('../utils/telegram');
 
 const submitContact = async (req, res) => {
   const { name, email, phone, message } = req.body || {};
@@ -27,15 +30,12 @@ const submitContact = async (req, res) => {
     )
     .run(name, email || "", phone, message, now);
 
-  const telegramText = [
-    "<b>Новая заявка из формы связи</b>",
-    "",
-    `<b>Имя:</b> ${String(name).trim()}`,
-    `<b>Телефон:</b> ${String(phone).trim()}`,
-    `<b>Email:</b> ${String(email || "не указан").trim()}`,
-    `<b>Сообщение:</b> ${String(message).trim()}`,
-    `<b>Дата/время:</b> ${new Date().toLocaleString("ru-RU")}`,
-  ].join("\n");
+  const telegramText = formatContactTelegramMessage({
+    name: String(name).trim(),
+    phone: String(phone).trim(),
+    email: String(email || '').trim(),
+    message: String(message).trim(),
+  });
 
   let telegramDelivered = true;
   try {
