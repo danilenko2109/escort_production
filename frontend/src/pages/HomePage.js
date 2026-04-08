@@ -175,7 +175,7 @@ const HomePage = () => {
       <WhyElegantSection />
       {/* <BookingStepsSection /> */}
       <ConfidentialitySection />
-      <MeetingFormatsSection />
+      {/* <MeetingFormatsSection /> */}
       <FaqSection />
       <FinalCtaSection
         onViewProfiles={() => navigate('/profiles')}
