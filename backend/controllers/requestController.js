@@ -1,4 +1,7 @@
-const { sendTelegramMessage } = require('../utils/telegram');
+const {
+  sendTelegramMessage,
+  formatBookingTelegramMessage,
+} = require('../utils/telegram');
 const db = require("../src/database/db");
 
 const ALLOWED_DURATIONS = ["1h", "2h", "3h"];
@@ -40,19 +43,16 @@ const submitBookingRequest = async (req, res) => {
 
   const bookingPhone = db.prepare("SELECT value FROM settings WHERE key = ?").get("booking_phone")?.value || "";
 
-  const telegramText = [
-    '<b>Новая заявка на анкету</b>',
-    '',
-    `<b>Код анкеты:</b> ${String(profileCode).trim()}`,
-    `<b>Длительность:</b> ${String(duration).trim()}`,
-    `<b>Дата:</b> ${String(bookingDate || 'не указана').trim()}`,
-    `<b>Время:</b> ${String(bookingTime || 'не указано').trim()}`,
-    `<b>Имя клиента:</b> ${String(clientName || 'не указано').trim()}`,
-    `<b>Телефон:</b> ${String(clientPhone || 'не указан').trim()}`,
-    `<b>Экстра:</b> ${(extras || []).join(', ') || 'нет'}`,
-    `<b>Комментарий:</b> ${String(comment || 'нет').trim()}`,
-    `<b>Создано:</b> ${new Date().toLocaleString('ru-RU')}`,
-  ].join('\n');
+  const telegramText = formatBookingTelegramMessage({
+    profileCode: String(profileCode).trim(),
+    duration: String(duration).trim(),
+    bookingDate: bookingDate ? String(bookingDate).trim() : '',
+    bookingTime: bookingTime ? String(bookingTime).trim() : '',
+    clientName: clientName ? String(clientName).trim() : '',
+    clientPhone: clientPhone ? String(clientPhone).trim() : '',
+    extras: extras || [],
+    comment: comment ? String(comment).trim() : '',
+  });
 
   let telegramDelivered = true;
   try {
