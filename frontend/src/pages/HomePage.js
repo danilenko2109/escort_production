@@ -43,9 +43,9 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen grain">
-      {/* Hero Section */}
+      
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden" data-testid="hero-section">
-        {/* Background */}
+        
         <div className="absolute inset-0 z-0 hero-lips-bg">
           <div
             className="absolute inset-0 opacity-[0.18] bg-center bg-no-repeat bg-cover md:bg-contain"
@@ -55,7 +55,7 @@ const HomePage = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/55 via-[#050505]/78 to-[#050505]" />
         </div>
 
-        {/* Decorative floating elements */}
+        
         <motion.div
           animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
           transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
@@ -67,7 +67,7 @@ const HomePage = () => {
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl"
         />
 
-        {/* Content */}
+        
         <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -121,7 +121,7 @@ const HomePage = () => {
         </section>
       ) : (
       <>
-      {/* Featured Profiles */}
+      
       <section className="py-24 md:py-32 relative" data-testid="featured-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <motion.div
@@ -173,9 +173,9 @@ const HomePage = () => {
       </section>
 
       <WhyElegantSection />
-      {/* <BookingStepsSection /> */}
+      
       <ConfidentialitySection />
-      {/* <MeetingFormatsSection /> */}
+      
       <FaqSection />
       <FinalCtaSection
         onViewProfiles={() => navigate('/profiles')}

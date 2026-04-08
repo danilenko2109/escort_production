@@ -1,15 +1,8 @@
-// health-endpoints.js
-// API endpoints for health checks and monitoring
 
 const os = require('os');
 
 const SERVER_START_TIME = Date.now();
 
-/**
- * Setup health check endpoints on the dev server
- * @param {Object} devServer - Webpack dev server instance
- * @param {Object} healthPlugin - Instance of WebpackHealthPlugin
- */
 function setupHealthEndpoints(devServer, healthPlugin) {
   if (!devServer || !devServer.app) {
     console.warn('[Health Check] Dev server not available, skipping health endpoints');
@@ -22,10 +15,6 @@ function setupHealthEndpoints(devServer, healthPlugin) {
   }
 
   console.log('[Health Check] Setting up health endpoints...');
-
-  // ====================================================================
-  // GET /health - Detailed health status (JSON)
-  // ====================================================================
   devServer.app.get("/health", (req, res) => {
     const webpackStatus = healthPlugin.getStatus();
     const uptime = Date.now() - SERVER_START_TIME;
@@ -78,10 +67,6 @@ function setupHealthEndpoints(devServer, healthPlugin) {
       environment: process.env.NODE_ENV || 'development',
     });
   });
-
-  // ====================================================================
-  // GET /health/simple - Simple text response (OK/COMPILING/ERROR)
-  // ====================================================================
   devServer.app.get("/health/simple", (req, res) => {
     const webpackStatus = healthPlugin.getSimpleStatus();
 
@@ -95,10 +80,6 @@ function setupHealthEndpoints(devServer, healthPlugin) {
       res.status(503).send('ERROR');
     }
   });
-
-  // ====================================================================
-  // GET /health/ready - Readiness check (Kubernetes/load balancer)
-  // ====================================================================
   devServer.app.get("/health/ready", (req, res) => {
     const webpackStatus = healthPlugin.getSimpleStatus();
 
@@ -117,20 +98,12 @@ function setupHealthEndpoints(devServer, healthPlugin) {
       });
     }
   });
-
-  // ====================================================================
-  // GET /health/live - Liveness check (Kubernetes)
-  // ====================================================================
   devServer.app.get("/health/live", (req, res) => {
     res.status(200).json({
       alive: true,
       timestamp: new Date().toISOString(),
     });
   });
-
-  // ====================================================================
-  // GET /health/errors - Get current errors and warnings
-  // ====================================================================
   devServer.app.get("/health/errors", (req, res) => {
     const webpackStatus = healthPlugin.getStatus();
 
@@ -142,10 +115,6 @@ function setupHealthEndpoints(devServer, healthPlugin) {
       state: webpackStatus.state,
     });
   });
-
-  // ====================================================================
-  // GET /health/stats - Compilation statistics
-  // ====================================================================
   devServer.app.get("/health/stats", (req, res) => {
     const webpackStatus = healthPlugin.getStatus();
     const uptime = Date.now() - SERVER_START_TIME;
@@ -174,15 +143,6 @@ function setupHealthEndpoints(devServer, healthPlugin) {
   console.log('  • GET /health/stats   - Statistics');
 }
 
-// ====================================================================
-// Helper Functions
-// ====================================================================
-
-/**
- * Format bytes to human-readable string
- * @param {number} bytes
- * @returns {string}
- */
 function formatBytes(bytes) {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -191,11 +151,6 @@ function formatBytes(bytes) {
   return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 }
 
-/**
- * Format duration to human-readable string
- * @param {number} ms - Duration in milliseconds
- * @returns {string}
- */
 function formatDuration(ms) {
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);

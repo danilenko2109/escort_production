@@ -79,12 +79,10 @@ const ProfileBookingForm = ({ profile }) => {
         const data = await settingsAPI.getBookingPhone();
         if (data?.phone) setBookingPhone(data.phone);
       } catch {
-        // fallback to default is enough for UI
       }
     };
     loadBookingPhone();
   }, []);
-
 
   useEffect(() => {
     if (showSuccessModal) {

@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className="bg-[#0A0A0A] border-t border-white/5 mt-24" data-testid="main-footer">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {/* Brand */}
+          
           <div className="col-span-1">
             <div className="flex items-center space-x-3 mb-4">
               <div className="h-10 w-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xs font-semibold">EG</div>
@@ -20,7 +20,7 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Navigation */}
+          
           <div>
             <h4 className="text-sm uppercase tracking-widest text-[#D4AF37] mb-4">
               Навигация
@@ -65,7 +65,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
+          
           <div>
             <h4 className="text-sm uppercase tracking-widest text-[#D4AF37] mb-4">
               Информация
@@ -92,7 +92,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
+          
           <div>
             <h4 className="text-sm uppercase tracking-widest text-[#D4AF37] mb-4">
               Контакты

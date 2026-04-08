@@ -1,9 +1,5 @@
 const API_URL = (process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001').replace(/\/$/, '');
 
-/**
- * Resolves profile image src for <img>: absolute URLs pass through;
- * paths like /uploads/... are prefixed with API origin.
- */
 export function resolveMediaUrl(src) {
   if (!src || typeof src !== 'string') return '';
   const t = src.trim();
