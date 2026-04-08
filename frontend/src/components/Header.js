@@ -41,8 +41,9 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group" data-testid="logo-link">
             <div className="h-12 w-12 border border-[#D4AF37]/35 bg-[#050505]/95 flex items-center justify-center shadow-[0_0_22px_rgba(212,175,55,0.12)]">
-              <img src={goldLipsIcon} alt="Lips logo" className="w-9 h-9 object-contain opacity-95" />
+              <img src={goldLipsIcon} alt="Elegant lips logo" className="w-9 h-9 object-contain opacity-95" />
             </div>
+            <span className="hidden sm:block text-lg tracking-[0.2em] uppercase text-[#D4AF37]">Elegant</span>
           </Link>
 
           {/* Desktop Navigation */}

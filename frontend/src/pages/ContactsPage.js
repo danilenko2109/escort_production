@@ -166,8 +166,8 @@ const ContactsPage = () => {
                   </div>
                   <div>
                     <p className="text-xs text-[#71717A] uppercase tracking-widest mb-1">Email</p>
-                    <a href="mailto:info@laura.ru" className="text-[#F8F8F8] hover:text-[#D4AF37] transition-colors">
-                      info@laura.ru
+                    <a href="mailto:info@elegant.ru" className="text-[#F8F8F8] hover:text-[#D4AF37] transition-colors">
+                      info@elegant.ru
                     </a>
                   </div>
                 </div>

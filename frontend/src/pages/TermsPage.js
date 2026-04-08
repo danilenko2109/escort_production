@@ -95,7 +95,7 @@ const TermsPage = () => {
             <section>
               <h2 className="text-2xl font-medium text-[#D4AF37] mb-4">10. Контакты</h2>
               <p>
-                По всем вопросам, связанным с использованием сайта, обращайтесь по адресу info@laura.ru
+                По всем вопросам, связанным с использованием сайта, обращайтесь по адресу info@elegant.ru
               </p>
             </section>
           </div>

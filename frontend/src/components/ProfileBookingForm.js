@@ -10,6 +10,7 @@ import {
   Loader2,
   Sparkles,
   ShieldCheck,
+  Send,
   X,
 } from 'lucide-react';
 import { requestAPI, settingsAPI } from '../services/api';
@@ -459,6 +460,15 @@ const ProfileBookingForm = ({ profile }) => {
             <div className="mt-6 rounded-sm border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-4 text-sm text-[#F8F8F8]">
 После оплаты отправьте квитанцию в Telegram <span className="text-[#D4AF37] font-medium">@aurasupportss_bot</span>, чтобы менеджер подтвердил заказ и отправил детали.
             </div>
+            <a
+              href="https://t.me/aurasupportss_bot"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 flex w-full items-center justify-center gap-2 border border-[#D4AF37]/45 bg-transparent py-3 text-sm uppercase tracking-widest text-[#D4AF37] transition-colors hover:bg-[#D4AF37]/10"
+            >
+              <Send size={16} />
+              Перейти в Telegram
+            </a>
             <button
               type="button"
               onClick={() => {

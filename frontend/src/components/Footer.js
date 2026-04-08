@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="h-10 w-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xs font-semibold">LA</div>
+              <div className="h-10 w-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xs font-semibold">EG</div>
               <span className="text-2xl font-medium text-[#D4AF37]">Elegant</span>
             </div>
             <p className="text-sm text-[#71717A] leading-relaxed">
@@ -100,7 +100,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center space-x-3 text-sm text-[#A1A1AA]">
                 <Mail size={16} className="text-[#D4AF37]" />
-                <span>info@laura.ru</span>
+                <span>info@elegant.ru</span>
               </li>
               <li className="flex items-center space-x-3 text-sm text-[#A1A1AA]">
                 <Phone size={16} className="text-[#D4AF37]" />
