@@ -76,7 +76,7 @@ const AdminDashboardPage = () => {
       <div className="border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-6 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="h-10 w-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xs font-semibold">LA</div>
+            <div className="h-10 w-10 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-xs font-semibold">EG</div>
             <h1 className="text-2xl font-medium text-[#D4AF37]">Админ-панель</h1>
           </div>
           <button
